@@ -31,6 +31,11 @@ pub struct HookEnv {
     quiet: bool,
 }
 
+fn dedup_preserve_order<T: Eq + std::hash::Hash + Clone>(v: Vec<T>) -> Vec<T> {
+    let mut seen = std::collections::HashSet::new();
+    v.into_iter().filter(|e| seen.insert(e.clone())).collect()
+}
+
 impl HookEnv {
     pub fn run(self) -> Result<()> {
         let config = Config::try_get()?;
@@ -51,6 +56,8 @@ impl HookEnv {
             paths.extend(split_paths(&p).collect_vec());
         }
         paths.extend(ts.list_paths()); // load the active runtime paths
+        let paths = dedup_preserve_order(paths);
+
         diff.path.clone_from(&paths); // update __MISE_DIFF with the new paths for the next run
 
         let settings = Settings::try_get()?;

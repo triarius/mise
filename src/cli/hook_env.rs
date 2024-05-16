@@ -105,6 +105,7 @@ impl HookEnv {
         to_remove: &Vec<PathBuf>,
     ) -> Result<Vec<EnvDiffOperation>> {
         let full = join_paths(&*env::PATH)?.to_string_lossy().to_string();
+
         let (pre, post) = match &*env::__MISE_ORIG_PATH {
             Some(orig_path) => match full.split_once(&format!(":{orig_path}")) {
                 Some((pre, post)) if !settings.activate_aggressive => {
@@ -119,6 +120,8 @@ impl HookEnv {
             .into_iter()
             .filter(|p| !p.is_empty())
             .join(":");
+        let new_paths = new_path.split(':').collect();
+        let new_path = dedup_preserve_order(new_paths).join(":");
         let mut ops = vec![EnvDiffOperation::Add("PATH".into(), new_path)];
 
         if let Some(input) = env::DIRENV_DIFF.deref() {

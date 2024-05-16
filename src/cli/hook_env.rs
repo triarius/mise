@@ -14,6 +14,11 @@ use crate::shell::{get_shell, ShellType};
 use crate::toolset::{Toolset, ToolsetBuilder};
 use crate::{env, hook_env};
 
+fn dedup_preserve_order<T: Eq + std::hash::Hash + Clone>(v: impl Iterator<Item = T>) -> Vec<T> {
+    let mut seen = std::collections::HashSet::new();
+    v.filter(|e| seen.insert(e.clone())).collect()
+}
+
 /// [internal] called by activate hook to update env vars directory change
 #[derive(Debug, clap::Args)]
 #[clap(hide = true)]
@@ -29,11 +34,6 @@ pub struct HookEnv {
     /// Hide warnings such as when a tool is not installed
     #[clap(long, short)]
     quiet: bool,
-}
-
-fn dedup_preserve_order<T: Eq + std::hash::Hash + Clone>(v: Vec<T>) -> Vec<T> {
-    let mut seen = std::collections::HashSet::new();
-    v.into_iter().filter(|e| seen.insert(e.clone())).collect()
 }
 
 impl HookEnv {
@@ -120,10 +120,10 @@ impl HookEnv {
             }
             None => (vec![], split_paths(&full).collect_vec()),
         };
-
-        let new_path = join_paths(pre.iter().chain(installs.iter()).chain(post.iter()))?
+        let new_paths = pre.iter().chain(installs.iter()).chain(post.iter());
+        let new_path = join_paths(dedup_preserve_order(new_paths))?
             .to_string_lossy()
-            .into_owned();
+            .to_string();
         let mut ops = vec![EnvDiffOperation::Add(PATH_KEY.to_string(), new_path)];
 
         if let Some(input) = env::DIRENV_DIFF.deref() {

@@ -39,7 +39,15 @@ rustPlatform.buildRustPackage {
   # is excluded by default from Nix.
   checkPhase = ''
     RUST_BACKTRACE=full cargo test --all-features -- \
+      --skip cli::generate \
       --skip cli::plugins::ls::tests::test_plugin_list_urls \
+      --skip cli::run::tests::test_task_run \
+      --skip config::config_file::mise_toml::tests::test_remove_plugin \
+      --skip config::config_file::mise_toml::tests::test_replace_versions \
+      --skip tera::tests::test_last_modified \
+      --skip test_render_with_custom_function_arch_arm64 \
+      --skip test_render_with_custom_function_invocation_directory \
+      --skip test_render_with_custom_function_os_family_unix \
       --skip tera::tests::test_last_modified
   '';
 

@@ -83,6 +83,7 @@ pub fn reset() {
     file::remove_all(&*dirs::TRUSTED_CONFIGS).unwrap();
     file::remove_all(&*dirs::TRACKED_CONFIGS).unwrap();
     file::create_dir_all(".mise/tasks").unwrap();
+    file::create_dir_all("/tmp").unwrap();
     file::write(
         ".mise/tasks/filetask",
         indoc! {r#"#!/usr/bin/env bash

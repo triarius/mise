@@ -100,6 +100,7 @@ pub fn reset() {
     )
     .unwrap();
     file::make_executable(".mise/tasks/.hidden-executable").unwrap();
+    file::create_dir_all("/tmp").unwrap();
     file::write(
         ".mise/tasks/filetask",
         indoc! {r#"#!/usr/bin/env bash

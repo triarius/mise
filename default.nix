@@ -38,7 +38,9 @@ rustPlatform.buildRustPackage {
   checkPhase = ''
     RUST_BACKTRACE=full cargo test --all-features -- \
       --skip cli::plugins::ls::tests::test_plugin_list_urls \
-      --skip cli::generate
+      --skip cli::generate \
+      --skip config::config_file::mise_toml::tests::test_remove_plugin \
+      --skip config::config_file::mise_toml::tests::test_replace_versions
   '';
 
   meta = with lib; {

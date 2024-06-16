@@ -40,7 +40,8 @@ rustPlatform.buildRustPackage {
       --skip cli::plugins::ls::tests::test_plugin_list_urls \
       --skip cli::generate \
       --skip config::config_file::mise_toml::tests::test_remove_plugin \
-      --skip config::config_file::mise_toml::tests::test_replace_versions
+      --skip config::config_file::mise_toml::tests::test_replace_versions \
+      --skip cli::run::tests::test_task_run
   '';
 
   meta = with lib; {

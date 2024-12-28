@@ -151,9 +151,14 @@ impl HookEnv {
             None => (vec![], split_paths(&full).collect_vec()),
         };
 
-        let new_path = join_paths(pre.iter().chain(installs.iter()).chain(post.iter()))?
-            .to_string_lossy()
-            .into_owned();
+        let mut seen = std::collections::HashSet::new();
+        let deduped_paths = pre
+            .iter()
+            .chain(installs.iter())
+            .chain(post.iter())
+            .filter(|p| seen.insert((*p).clone()));
+
+        let new_path = join_paths(deduped_paths)?.to_string_lossy().into_owned();
         let mut ops = vec![EnvDiffOperation::Add(PATH_KEY.to_string(), new_path)];
 
         if let Some(input) = env::DIRENV_DIFF.deref() {

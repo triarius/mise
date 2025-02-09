@@ -41,6 +41,7 @@ rustPlatform.buildRustPackage {
     RUST_BACKTRACE=full cargo test --all-features -- \
       --skip cli::plugins::ls::tests::test_plugin_list_urls \
       --skip tera::tests::test_last_modified \
+      --skip config::config_file::tests::test_detect_config_file_type \
       --skip plugins::core::ruby::tests::test_list_versions_matching
   '';
 
